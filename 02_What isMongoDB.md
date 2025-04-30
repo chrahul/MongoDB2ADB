@@ -5,6 +5,10 @@
 
 MongoDB is a **NoSQL document database** that stores data in the form of **field-value pairs** within **documents**, which are grouped into **collections**, and those collections reside in a **database**.
 
+
+![image](https://github.com/user-attachments/assets/4f239d57-e31b-48f9-a30b-ee402088a2d3)
+
+
 ---
 
 ###  Core Structure
