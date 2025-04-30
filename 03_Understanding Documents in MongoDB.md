@@ -6,6 +6,10 @@
 In MongoDB, **databases** contain **collections**, and collections store **documents**.  
 Each document is composed of **key-value pairs** that represent the actual data.
 
+
+![image](https://github.com/user-attachments/assets/55b6a20d-312d-497c-aeac-03834d9c665d)
+
+
 ---
 
 ###  Structure of a Document
