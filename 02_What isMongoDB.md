@@ -35,9 +35,9 @@ Consider two customer documents in the same collection:
 // Document 2
 {
   "customerId": 102,
-  "name": "Tejas",
-  "email": "tejas@example.com",
-  "address": "Pune",
+  "name": "Mark",
+  "email": "mark@example.com",
+  "address": "UK",
   "phone": "+91-9999999999"
 }
 ```
