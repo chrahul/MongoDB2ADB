@@ -90,5 +90,4 @@ Refer to the official docs for in-depth planning and operational best practices:
 
 ---
 
-Would you like a **diagram** showing the flow between mongos, config servers, shards, and replica sets?  
-I can also prepare a **hand-drawn style architecture** or a **Draw.io-style deployment diagram**.
+
