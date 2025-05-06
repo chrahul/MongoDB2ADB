@@ -83,11 +83,6 @@ mongoexport --db salesdb --collection orders --out exports/orders.json
  **That’s it — your data is ready for import to AJD after this.**
 
 ---
-
- **Yes — you are absolutely correct.**
-
-Let me confirm and explain why:
-
 ---
 
 ##  **Loading into MongoDB Replica Set — When it Makes Sense**
@@ -127,11 +122,6 @@ Replica set syncing would only add unnecessary complexity here.
 * **Production cutover** with minimal downtime.
 
 ---
-
-**Your understanding is spot on.**
-For cross-cloud POC → **export/import**.
-For in-cloud (OCI) with large data → **replica set sync**.
-
 ---
 
 
