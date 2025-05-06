@@ -269,21 +269,15 @@ You should see:
 
 | Component                     | Status |
 | ----------------------------- | ------ |
-| MongoDB Installed             | ✅      |
-| MongoDB Running               | ✅      |
-| Python Virtual Env Created    | ✅      |
-| Libraries Installed           | ✅      |
-| Data Generator Script Created | ✅      |
-| Database Populated            | ✅      |
+| MongoDB Installed             | Done      |
+| MongoDB Running               | Done     |
+| Python Virtual Env Created    | Done      |
+| Libraries Installed           | Done      |
+| Data Generator Script Created | Done      |
+| Database Populated            | Done      |
 
 ---
 
-##  Ready for Next Steps
-
-Your **Step 0** for migration testing is now fully complete:
-
-* You have a **production-style MongoDB database**.
-* You can now proceed with **mongoexport** or **VPN + AJD testing**.
 
 ---
 
