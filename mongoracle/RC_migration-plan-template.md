@@ -1,5 +1,9 @@
 # MongoDB to Oracle AJD Migration Plan
 
+
+![image](https://github.com/user-attachments/assets/713b6d5a-485e-48d6-b75e-f6d470cf0559)
+
+
 ---
 
 ## 1. Migration Overview
