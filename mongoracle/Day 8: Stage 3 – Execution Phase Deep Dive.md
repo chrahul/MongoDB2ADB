@@ -92,7 +92,7 @@ The tool shows:
 
 ---
 
-## ✅ CLI Command Cheat Sheet
+##  CLI Command Cheat Sheet
 
 ### mongodump
 
