@@ -3,6 +3,10 @@
 
 # **Day 7: Stage 2 – Preparation Phase Deep Dive**
 
+
+![image](https://github.com/user-attachments/assets/aad75e10-bc7e-4535-8fe4-8a479dbbe5ce)
+
+
 ---
 
 ## Objective:
