@@ -60,9 +60,9 @@ Think of this in **5 Phases**:
 
 | Task                                  | Outcome                           |
 | ------------------------------------- | --------------------------------- |
-| Test queries via mongosh, Compass     | 🔜 Compare to MongoDB performance |
-| Test app-level queries (if needed)    | 🔜                                |
-| Optional: Enable Oracle SQL over JSON | 🔜                                |
+| Test queries via mongosh, Compass     | Compare to MongoDB performance |
+| Test app-level queries (if needed)    |                                |
+| Optional: Enable Oracle SQL over JSON |                                 |
 
 **Goal:** Ensure the migrated data works for real queries.
 
