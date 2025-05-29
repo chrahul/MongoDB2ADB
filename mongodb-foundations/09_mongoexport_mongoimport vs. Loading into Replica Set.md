@@ -106,7 +106,7 @@ mongoexport --db salesdb --collection orders --out exports/orders.json
 | ---------------------------- | ------------------------------------- |
 | MongoDB hosted on            | **Azure VM**                          |
 | AJD will be                  | **OCI**                               |
-| Private fast link available? | ❌ Not yet (unless you set up VPN/DRG) |
+| Private fast link available? | Not yet (unless you set up VPN/DRG) |
 | Size of data                 | \~100 MB (easy for export/import)     |
 | Downtime tolerance           | OK for POC                            |
 
