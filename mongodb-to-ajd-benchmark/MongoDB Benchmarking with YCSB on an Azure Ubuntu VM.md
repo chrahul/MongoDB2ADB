@@ -3,10 +3,6 @@
 > **Purpose**  Provide an end‑to‑end, reproducible lab guide for measuring standalone MongoDB performance on an Azure Ubuntu machine using YCSB, plus an interpretation of the results and lessons learned. The guide captures every command we executed during the live session and expands it into a 15‑20‑page, internal‑quality tutorial ready for GitHub.
 
 
-Refrences:
-https://github.com/RITIKHARIANI/YCSB-Benchmarking-MongoDB
-https://scalegrid.io/blog/how-to-benchmark-mongodb-with-ycsb/
-https://docs.bangdb.com/ycsb
 ---
 
 ## 1  Lab Overview
@@ -277,8 +273,4 @@ cd /ycsb/mongodb/target/ycsb-mongodb-binding-0.18.0-SNAPSHOT/bin
 
 ---
 
-## 15  Revision History
 
-| Date        | Author                | Change                       |
-| ----------- | --------------------- | ---------------------------- |
-| 04 Jul 2025 | Rahul C. & ChatGPT o3 | Initial 20‑page lab tutorial |
