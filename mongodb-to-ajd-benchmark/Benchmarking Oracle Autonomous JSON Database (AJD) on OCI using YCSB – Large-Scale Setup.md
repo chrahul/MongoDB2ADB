@@ -1,206 +1,224 @@
-**Lab#2: Benchmarking Oracle Autonomous JSON Database (AJD) on OCI using YCSB – Large-Scale Setup** 
 
 ---
 
-# **Lab#2: Benchmarking Oracle AJD on OCI using YCSB – Large-Scale Setup**
-
-###  Objective:
-
-To benchmark **Oracle Autonomous JSON Database (AJD)** on **Oracle Cloud Infrastructure (OCI)** using the **YCSB (Yahoo! Cloud Serving Benchmark)** tool with **large-scale data**, emulating real-world, high-throughput workloads and comparing results later against MongoDB on a similar setup.
+# **Lab #3: Large-Scale Benchmarking of Oracle Autonomous JSON Database (AJD) using YCSB**
 
 ---
 
-##  Lab Requirements
+##  **Objective**
 
-| Component          | Configuration                                                                     |
-| ------------------ | --------------------------------------------------------------------------------- |
-| **VM Type**        | Oracle Linux 8.x, 2 vCPU, 8 GB RAM                                                |
-| **VM Shape**       | `VM.Standard3.Flex` (min), can scale up for larger datasets                       |
-| **Block Storage**  | 100 GB OCI Block Volume                                                           |
-| **Database**       | Autonomous JSON Database (AJD) provisioned on OCI                                 |
-| **YCSB Tool**      | Version `0.18.0` compiled with JDBC binding                                       |
-| **Wallet**         | Oracle Wallet downloaded from AJD Console (contains `tnsnames.ora`, `.jks`, etc.) |
-| **JARs Required**  | `ojdbc11.jar`, `oraclepki.jar`, `osdt_core.jar`, `osdt_cert.jar`                  |
-| **Data Volume**    | **Large scale**: `recordcount=1000000`, `operationcount=1000000`                  |
-| **Benchmark Type** | **Workload A** – Balanced read/write workload                                     |
+Benchmark Oracle AJD's performance using **Yahoo! Cloud Serving Benchmark (YCSB)** with **1 million records and 1 million operations**, simulating a realistic, high-load application environment. The results will help us compare AJD with other NoSQL document databases like MongoDB.
 
 ---
 
-##  Step-by-Step Setup
+##  **Lab Requirements**
 
-### 1️ Provision AJD on OCI
-
-* Go to OCI Console → **Autonomous JSON DB** → Create new DB
-
-  * Choose workload type: **JSON**
-  * Size: Keep default
-  * **Auto scaling**: Enabled
-  * Download the **Wallet** after DB is provisioned
-  * Note the **Service Name** (e.g., `ajd_medium`) from `tnsnames.ora`
-
----
-
-### 2️ Create Oracle Linux VM
-
-* **Shape**: `VM.Standard3.Flex` (2 OCPU, 8GB RAM)
-* Attach **Block Volume**: 100 GB
-* Update OS:
-
-  ```bash
-  sudo yum update -y
-  ```
+| Component           | Configuration                                    |
+| ------------------- | ------------------------------------------------ |
+| **VM (on OCI)**     | 2 vCPU, 8 GB RAM (e.g., `VM.Standard3.Flex`)     |
+| **OS**              | Oracle Linux 8.x                                 |
+| **Storage**         | 100 GB Block Volume                              |
+| **DB Target**       | Oracle Autonomous JSON Database (Medium service) |
+| **Wallet**          | Downloaded and unzipped in: `/root/YCSB/wallet`  |
+| **YCSB Version**    | `0.18.0`                                         |
+| **JDK**             | Java 11 or 17                                    |
+| **Threads**         | 20                                               |
+| **Record Count**    | 1,000,000                                        |
+| **Operation Count** | 1,000,000                                        |
 
 ---
 
-### 3️ Install Java and Maven
+##  **Pre-Requisites Setup**
+
+### 1️ Install Required Packages
 
 ```bash
-sudo yum install java-11-openjdk-devel git -y
-sudo yum install maven -y
+sudo yum install git java-11-openjdk maven unzip -y
 ```
 
----
-
-### 4️ Install YCSB
+### 2️ Clone and Build YCSB
 
 ```bash
 cd ~
 git clone https://github.com/brianfrankcooper/YCSB.git
 cd YCSB
-mvn -pl site.ycsb:jdbc-binding -am clean package -DskipTests
+mvn -pl jdbc-binding -am clean package
 ```
 
 ---
 
-### 5️ Copy Required JARs to lib folder
+##  **Directory Structure Reference**
 
-Place the following into the YCSB JDBC binding lib directory:
-
-```bash
-cp /path/to/ojdbc11.jar jdbc/target/ycsb-jdbc-binding-*/lib/
-cp /path/to/oraclepki.jar jdbc/target/ycsb-jdbc-binding-*/lib/
-cp /path/to/osdt_core.jar jdbc/target/ycsb-jdbc-binding-*/lib/
-cp /path/to/osdt_cert.jar jdbc/target/ycsb-jdbc-binding-*/lib/
+```
+~/YCSB/
+├── jdbc/
+│   └── target/ycsb-jdbc-binding-0.18.0-SNAPSHOT/
+│       ├── lib/
+│       │   ├── ojdbc11.jar
+│       │   ├── oraclepki.jar
+│       │   ├── osdt_cert.jar
+│       │   └── osdt_core.jar
+├── workloads/
+│   └── workload_large
+├── jdbc/oracle-ajd.properties
+└── wallet/  (Oracle Wallet unzipped here)
 ```
 
 ---
 
-### 6️ Unzip and Configure Wallet
+##  **Step-by-Step Wallet Configuration**
+
+### 3️ Unzip Oracle Wallet
+
+Download from OCI Console and unzip into:
 
 ```bash
-unzip Wallet_<DB_NAME>.zip -d ~/YCSB/wallet
+mkdir -p ~/YCSB/wallet
+unzip Wallet_WSMNGDB.zip -d ~/YCSB/wallet
+```
+
+### 4️ Set Permissions
+
+```bash
 chmod 600 ~/YCSB/wallet/*
 ```
 
-* Validate the contents:
+### 5️ ojdbc.properties (No need to modify unless using JKS)
 
-```bash
-ls ~/YCSB/wallet
-```
-
----
-
-### 7️ Configure `oracle-ajd.properties`
-
-Create the properties file for YCSB connection:
+Check it includes:
 
 ```properties
-# ~/YCSB/jdbc/oracle-ajd.properties
-
-db.driver=oracle.jdbc.OracleDriver
-db.url=jdbc:oracle:thin:@ajd_medium?TNS_ADMIN=/root/YCSB/wallet
-db.user=ADMIN
-db.passwd=YourPassword123
-jdbc.batchupdateapi=true
-recordcount=1000000
-operationcount=1000000
+oracle.net.wallet_location=(SOURCE=(METHOD=FILE)(METHOD_DATA=(DIRECTORY=/root/YCSB/wallet)))
+oracle.net.tns_admin=/root/YCSB/wallet
 ```
 
 ---
 
-### 8️ Export Required JAVA\_OPTS
+##  **Step-by-Step: Create Config Files**
+
+### 6️ `oracle-ajd.properties` (JDBC Settings)
+
+Create:
 
 ```bash
-export JAVA_OPTS="-Doracle.net.tns_admin=/root/YCSB/wallet"
+nano ~/YCSB/jdbc/oracle-ajd.properties
+```
+
+Paste:
+
+```properties
+db.driver=oracle.jdbc.OracleDriver
+db.url=jdbc:oracle:thin:@wsmngdb_medium?TNS_ADMIN=/root/YCSB/wallet
+db.user=admin
+db.pass=your_ajd_password
+db.batchsize=100
+jdbc.fetchsize=10
+jdbc.autocommit=true
+jdbc.usebatchupdateapi=true
 ```
 
 ---
 
-### 9️ Run Load Phase (Insert Data)
+### 7️ `workload_large` (Benchmark Settings)
+
+Create:
+
+```bash
+nano ~/YCSB/workloads/workload_large
+```
+
+Paste:
+
+```properties
+recordcount=1000000
+operationcount=1000000
+workload=com.yahoo.ycsb.workloads.CoreWorkload
+readproportion=0.5
+updateproportion=0.5
+insertproportion=0
+scanproportion=0
+requestdistribution=zipfian
+```
+
+---
+
+##  **Step-by-Step: Benchmark Execution**
+
+### 8️ Load Phase (Inserts 1 Million Records)
 
 ```bash
 cd ~/YCSB
 ./jdbc/target/ycsb-jdbc-binding-*/bin/ycsb load jdbc -s \
   -P jdbc/oracle-ajd.properties \
-  -P workloads/workloada
+  -P workloads/workload_large \
+  -threads 20 \
+  -p status.interval=5 \
+  > ycsb_ajd_load.log 2>&1
 ```
 
-* **Monitor**: This may take several minutes for 1 million records.
+###  Validate:
+
+```bash
+grep "\[INSERT\]" ycsb_ajd_load.log | tail
+```
 
 ---
 
-###  Run Transaction Phase (Read/Update Ops)
+### 9️ Run Phase (Performs Read/Update Operations)
 
 ```bash
 ./jdbc/target/ycsb-jdbc-binding-*/bin/ycsb run jdbc -s \
   -P jdbc/oracle-ajd.properties \
-  -P workloads/workloada
+  -P workloads/workload_large \
+  -threads 20 \
+  -p status.interval=5 \
+  > ycsb_ajd_run.log 2>&1
 ```
 
----
-
-##  Output Sample (Interpreting Results)
-
-You will receive key metrics like:
-
-```text
-[OVERALL], RunTime(ms), 142943
-[OVERALL], Throughput(ops/sec), 699.9
-[READ], AverageLatency(us), 8750
-[UPDATE], AverageLatency(us), 9271
-[INSERT], Return=OK, 1000000
-```
-
-* **Throughput**: Higher = better
-* **Latency**: Lower = better
-* **Percentile Latency**: Helps assess tail performance
-
----
-
-##  Pro Tips & Troubleshooting
-
-| Issue                                              | Resolution                                             |
-| -------------------------------------------------- | ------------------------------------------------------ |
-| `ORA-17957: Unable to initialize keystore`         | Ensure wallet files are readable and paths are correct |
-| `NoClassDefFoundError` or `ClassNotFoundException` | Ensure all 4 Oracle JARs are present in `lib/`         |
-| Performance seems slow                             | Use a larger VM shape like 4 vCPU / 16 GB RAM          |
-
----
-
-##  Optional – Capture JSON Load in DB
-
-You can use SQL Developer Web to:
-
-```sql
-SELECT COUNT(*) FROM YCSB_USERTABLE;
-SELECT * FROM YCSB_USERTABLE WHERE YCSB_KEY = 'user292199';
-```
-
----
-
-##  Optional – Repeat With Other Workloads
-
-Change workload file:
+###  Validate:
 
 ```bash
--P workloads/workloadb  # Read-heavy
--P workloads/workloadd  # Read-latest
+grep "\[READ\]" ycsb_ajd_run.log | tail
+grep "\[UPDATE\]" ycsb_ajd_run.log | tail
 ```
 
 ---
 
-##  Outcome
+##  **Important Metrics Captured**
 
-This lab generates empirical results on AJD’s performance under high-volume JSON operations using YCSB. The results can now be compared to **MongoDB’s performance on Azure VM** from Lab#1 for fair evaluation.
+* **Throughput**: `ops/sec`
+* **Latency**: Min / Max / Average / 50th / 95th / 99th percentile
+* **Runtime**: Total duration of test
+* **GC Stats**: Young/Old Generation GC count and time
 
 ---
+
+##  **Troubleshooting Tips**
+
+| Issue              | Fix                                                                |
+| ------------------ | ------------------------------------------------------------------ |
+| Test ends in < 60s | Check if `recordcount` and `operationcount` were actually applied. |
+| Zero inserts       | Ensure fresh table. Drop table before rerun.                       |
+| SSL errors         | Recheck wallet path & permissions.                                 |
+| High max latency   | AJD first-time TCPS overhead is expected. Ignore one-off spikes.   |
+
+---
+
+##  **Optional: Drop Table Before Each Test**
+
+Run from SQL Developer or SQL\*Plus:
+
+```sql
+DROP TABLE usertable;
+```
+
+---
+
+##  **Outputs to Archive**
+
+1. `ycsb_ajd_load.log`
+2. `ycsb_ajd_run.log`
+3. Insert/Read/Update summary tables
+
+---
+
