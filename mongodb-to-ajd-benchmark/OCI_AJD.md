@@ -1,150 +1,66 @@
+Benchmarking Oracle Autonomous JSON Database (AJD) using YCSB – Final Step-by-Step Guide
 
----
+Introduction
+This document provides a complete step-by-step setup for benchmarking Oracle Autonomous JSON Database (AJD) using Yahoo! Cloud Serving Benchmark (YCSB). It includes environment setup, dependencies, configurations, and troubleshooting based on real execution experience.
 
-###  **Objective**
 
-Benchmark insert/read/update performance of Oracle AJD using the [Yahoo! Cloud Serving Benchmark (YCSB)](https://github.com/brianfrankcooper/YCSB).
+Step 1: Environment Setup
+We used an Oracle Cloud Infrastructure (OCI) CentOS-based VM to execute the benchmarking.
+Ensure you have Oracle Cloud CLI and an internet connection enabled. All steps were executed as the `root` user.
 
----
+Step 2: Install Oracle Instant Client
+Download and install the following RPMs from Oracle:
+- oracle-instantclient-basic-21.18.0.0.0-1.el8.x86_64.rpm
+- oracle-instantclient-jdbc-21.18.0.0.0-1.el8.x86_64.rpm
 
-###  **Pre-requisites**
+Then install using:
+$ yum -y localinstall oracle-instantclient-*.rpm
 
-| Requirement                                           | Purpose                            |
-| ----------------------------------------------------- | ---------------------------------- |
-|  Oracle Cloud Account                                | To provision AJD                   |
-|  AJD instance                                        | Must be provisioned and accessible |
-|  VCN + Public IP/Access                              | So that your container can connect |
-|  Linux machine with Docker                           | To run the YCSB container          |
-|  Git & Maven installed (for local build alternative) | Optional if not using Docker       |
 
----
+Step 3: Clone and Build YCSB
+Clone YCSB from GitHub:
+$ git clone https://github.com/brianfrankcooper/YCSB.git
+$ cd YCSB
+Build YCSB JDBC binding:
+$ mvn -pl site.ycsb:jdbc-binding -am clean package
 
-###  **Benchmarking Approach**
 
-We will:
+Step 4: Add AJD Wallet & JDBC Drivers
+Download the AJD wallet and unzip to a local directory (e.g., /root/YCSB/wallet).
 
-* Use [YCSB](https://github.com/brianfrankcooper/YCSB) and its JDBC binding
-* Build a custom Docker image (YCSB + Maven + MongoDB or JDBC bindings)
-* Run the benchmark workloads via container
-* Point the workload to your AJD using Oracle JDBC URL
+Make sure `oraclepki.jar`, `osdt_core.jar`, and `osdt_cert.jar` are included in:
 
----
-
-###  **Steps to Benchmark AJD**
-
----
-
-#### 1️ Clone YCSB GitHub repo
-
-```bash
-git clone https://github.com/brianfrankcooper/YCSB.git
-cd YCSB
-```
-
-GitHub link: [https://github.com/brianfrankcooper/YCSB](https://github.com/brianfrankcooper/YCSB)
-
----
-
-#### 2️ \[Optional] Modify `pom.xml` to add Oracle JDBC Driver support
-
-Oracle JDBC driver is **not available via Maven Central**, so you may need to manually install it into your local Maven repo or use a volume mount if needed.
-(Or switch to `MongoDB` binding for simpler testing.)
-
----
-
-#### 3️ Create a Dockerfile (use MongoDB or JDBC binding)
-
-##### Example: For MongoDB binding
-
-```Dockerfile
-FROM maven:3.9.7-eclipse-temurin-11 AS build
-WORKDIR /ycsb
-COPY . .
-RUN mvn -pl mongodb -am -B -q clean package
-
-FROM eclipse-temurin:11-jre-jammy
-WORKDIR /ycsb
-COPY --from=build /ycsb/bin ./bin
-COPY --from=build /ycsb/workloads ./workloads
-COPY --from=build /ycsb/mongodb/target ./mongodb/target
-ENTRYPOINT ["/bin/bash"]
-```
-
----
-
-#### 4️ Build Docker Image
-
-```bash
-docker build -t ycsb:mongodb .
-```
-
----
-
-#### 5️ Run YCSB Container to Benchmark
-
-Use `load` for inserting data and `run` for benchmarking read/update.
-
-Example: MongoDB binding (adjust for JDBC/AJD accordingly)
-
-```bash
-docker run --rm -it ycsb:mongodb \
-  ./bin/ycsb load mongodb -s \
-  -P workloads/workloada \
-  -p mongodb.url="mongodb://<host>:<port>/<db>"
-```
-
----
-
-#### 6️ \[For Oracle AJD]
-
-If using Oracle Autonomous JSON DB, follow this:
-
-* Download Oracle Instant Client + JDBC thin driver
-* Use the **JDBC binding** in YCSB
-* Provide connection string like:
-
-```bash
-jdbc:oracle:thin:@<AJD_TNS_NAME>?TNS_ADMIN=/path/to/your/wallet
-```
-
-Example command (adjust paths accordingly):
-
-```bash
-./bin/ycsb load jdbc -s -P workloads/workloada \
-  -p db.driver=oracle.jdbc.OracleDriver \
-  -p db.url="jdbc:oracle:thin:@ajd_high?TNS_ADMIN=/ycsb/wallet" \
-  -p db.user=admin \
-  -p db.passwd=YourPassword
-```
-
----
-
-###  **Output Sample**
+`~/YCSB/jdbc/target/ycsb-jdbc-binding-0.18.0-SNAPSHOT/lib/`
+⚙ Step 5: Create Properties File
+Create `oracle-ajd.properties` inside the `jdbc/` directory:
 
 ```
-[READ], Operations, Return=OK, 4999
-[UPDATE], Operations, Return=OK, 4870
-[INSERT], Operations, Return=OK, 5000
-[CLEANUP], Operations, Return=OK, 1
-Run finished, takes 8.3522131 seconds
+db.driver=oracle.jdbc.OracleDriver
+db.url=jdbc:oracle:thin:@<AJD_TNS_ALIAS>?TNS_ADMIN=/root/YCSB/wallet
+db.user=ADMIN
+db.passwd=<YOUR_PASSWORD>
+jdbc.batchupdateapi=true
+recordcount=1000000
+operationcount=1000000
 ```
 
----
+Replace <AJD_TNS_ALIAS> and <YOUR_PASSWORD> accordingly.
 
-###  \[GitHub Reference Links]
-
-*  YCSB Main Repo: [https://github.com/brianfrankcooper/YCSB](https://github.com/brianfrankcooper/YCSB)
-*  MongoDB binding: [`mongodb/`](https://github.com/brianfrankcooper/YCSB/tree/master/mongodb)
-*  JDBC binding: [`jdbc/`](https://github.com/brianfrankcooper/YCSB/tree/master/jdbc)
-*  Sample Workloads: [`workloads/`](https://github.com/brianfrankcooper/YCSB/tree/master/workloads)
-
----
-
-###  OCI Wallet Config for JDBC (AJD)
-
-* Download **wallet.zip** from OCI AJD Console
-* Unzip it and set `TNS_ADMIN=/path/to/unzipped/wallet`
-
----
+Step 6: Load Data to AJD
+Run the following command to load data:
+$ ./bin/ycsb load jdbc -P workloads/workloada -P jdbc/oracle-ajd.properties -threads 20 -s -p status.interval=5
 
 
+Step 7: Run Benchmark
+Execute the benchmarking workload using:
+$ ./bin/ycsb run jdbc -P workloads/workloada -P jdbc/oracle-ajd.properties -threads 20 -s -p status.interval=5
+
+Common Errors and Fixes
+
+- Missing JARs like `oraclepki.jar`, `osdt_core.jar`: Ensure they are in lib directory and included in classpath.
+- TNS_ADMIN not found: Confirm correct wallet path is used in db.url.
+- Permissions error: Ensure you have `chmod +r` on wallet files for root user.
+- `Missing property: workload`: Always use `-P workloads/workloada` with your run/load commands.
+
+Conclusion
+Following this guide ensures a clean and repeatable benchmarking environment for comparing AJD performance. Feel free to fork and enhance this guide in your GitHub repository.
