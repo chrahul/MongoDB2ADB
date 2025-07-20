@@ -17,7 +17,7 @@
 
 ---
 
-### ✔ **Conclusion:**
+### **Conclusion:**
 
 * You’ve **successfully loaded and benchmarked** 6 million records using **Workload A** on MongoDB.
 * The results are **valid** and consistent with expected behavior for a mixed workload (50% reads, 50% updates).
