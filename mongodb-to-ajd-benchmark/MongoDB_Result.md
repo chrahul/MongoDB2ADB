@@ -68,7 +68,7 @@
 
 ---
 
-### ⚠**Insert Failures Summary**
+### **Insert Failures Summary**
 
 * **Count**: 17
 * **Reason**: Duplicate key errors on `_id` field (`E11000 duplicate key error`)
