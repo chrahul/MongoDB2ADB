@@ -220,7 +220,65 @@ MongoDB demonstrates **high throughput** and **low latency** for read-dominant u
 
 ---
 ---
+**Workload D** for **6 million records** :
+
+
+
+###  **Workload D (Read + Insert, 6M records)**
+
+This simulates an **application that reads most of the time but also does inserts**, e.g., event or log ingestion systems with light querying.
+
+####  Overall Metrics:
+
+* **Run Time:** 37.57 seconds
+* **Throughput:** **15,968 ops/sec**
+
+
+###  **Detailed Metrics**
+
+####  Read Operations:
+
+* **Total Reads:** 570,016
+* **Average Latency:** 978 μs
+* **Min Latency:** 133 μs
+* **Max Latency:** 66,751 μs
+* **P50 (Median):** 812 μs
+* **P95:** 2,283 μs
+* **P99:** 4,339 μs
+
+####  Insert Operations:
+
+* **Total Inserts:** 29,984
+* **Average Latency:** 1,161 μs
+* **Min Latency:** 166 μs
+* **Max Latency:** 78,399 μs
+* **P50 (Median):** 887 μs
+* **P95:** 2,963 μs
+* **P99:** 5,207 μs
+
+
+### Cleanup:
+
+* Average Latency: 348 μs (Not critical; cleanup phase latency is normal)
+
+
+###  Garbage Collection:
+
+* **G1 Young GC:** 95 collections
+* **GC Pause Time Total:** 137 ms (0.36% of test duration)
+
+
+### Quick Interpretation:
+
+* **Throughput remains high** even with mixed workload.
+* **Read latencies are low** and consistent.
+* **Insert latencies are slightly higher**, as expected due to write amplification and journaling in MongoDB.
+* **GC overhead is negligible**, showing JVM health is good.
+
 ---
+---
+
+
 
 
 
@@ -244,7 +302,6 @@ MongoDB demonstrates **high throughput** and **low latency** for read-dominant u
 
 Here are the **key performance findings** from the output:
 
----
 
 ###  **Workload A (Run Phase – 16M records on MongoDB)**
 
@@ -256,7 +313,6 @@ Here are the **key performance findings** from the output:
 | **Test Duration**    | \~230.6 seconds         |
 | **Workload Pattern** | 50% Reads / 50% Updates |
 
----
 
 ###  **Latency Analysis**
 
@@ -280,7 +336,6 @@ Here are the **key performance findings** from the output:
 | 99th       | 12095 µs                  |
 | 99.9th     | 16447 µs                  |
 
----
 
 ###  **Interpretation**
 
@@ -288,7 +343,7 @@ Here are the **key performance findings** from the output:
 * **Latency remains within acceptable bounds**, showing that MongoDB handles mixed read/write workloads efficiently even at scale.
 * **Tail latencies** (99.9th percentile) stay under \~18 ms, which is good for large-scale applications with moderate real-time needs.
 
----
+
 
 ###  Summary for Report
 
@@ -296,12 +351,8 @@ Here are the **key performance findings** from the output:
 
 ---
 ---
----
-
 
  **Workload B (Read-Heavy)** benchmark run on **MongoDB (16M records)**:
-
-
 
 ###  **Test Parameters**
 
@@ -320,7 +371,7 @@ Here are the **key performance findings** from the output:
     -p mongodb.url="mongodb://localhost:27017/ycsb?w=1"
   ```
 
----
+
 
 ###  **Performance Metrics**
 
@@ -353,7 +404,7 @@ Here are the **key performance findings** from the output:
 * **Young Gen GC Time**: `137 ms`
 * **GC Overhead**: \~`0.33%` of total runtime
 
----
+
 
 ###  Observations
 
@@ -363,8 +414,6 @@ Here are the **key performance findings** from the output:
 
 ---
 ---
----
-
 
 **MongoDB Workload C (Update-Heavy, 16M records)** benchmark run:
 
@@ -383,7 +432,7 @@ Here are the **key performance findings** from the output:
   > output-mongo-run-16m-workloadc.txt
 ```
 
----
+
 
 ###  **Performance Metrics**
 
@@ -399,7 +448,7 @@ Here are the **key performance findings** from the output:
 | **95th Percentile**      | 2,487 µs                 |
 | **99th Percentile**      | 4,355 µs                 |
 
----
+
 
 ###  **Cleanup Performance**
 
@@ -409,7 +458,7 @@ Here are the **key performance findings** from the output:
 | **Avg Cleanup Latency** | 372 µs   |
 | **Max Cleanup Latency** | 5,939 µs |
 
----
+
 
 ###  **Garbage Collection**
 
@@ -427,18 +476,12 @@ Here are the **key performance findings** from the output:
 * Update latency remained within expected bounds — with 95% updates completing in <2.5 ms.
 * Garbage collection overhead is negligible (<0.5%), indicating memory handling is optimal.
 
----
+
 
  **Conclusion**: MongoDB performed **robustly under Write-Heavy (Update) workload** at the 16M scale. Throughput held steady and latencies were low, confirming the system's efficiency for OLTP-like write patterns.
 
-
-
-
-
 ---
 ---
----
-
 
 **Workload D (Read Latest)** test on **MongoDB with 16 million records**:
 
@@ -452,11 +495,11 @@ Here are the **key performance findings** from the output:
 | **Throughput**    | 13,679 ops/sec |
 | **GC Time (%)**   | 0.31%          |
 
----
+
 
 ###  **Operation Breakdown**
 
-#### 🔹 READ (Latest)
+####  READ (Latest)
 
 | Metric                  | Value      |
 | ----------------------- | ---------- |
@@ -470,7 +513,7 @@ Here are the **key performance findings** from the output:
 
  **Return=OK**: All 569,947 read operations were successful.
 
----
+
 
 ####  INSERT (during test)
 
@@ -486,13 +529,12 @@ Here are the **key performance findings** from the output:
 
  **Return=OK**: All 30,053 inserts completed successfully.
 
----
+
 
 ####  CLEANUP
 
 * 16 operations with **very low latency** (most < 3ms).
 
----
 
 ###  Interpretation
 
@@ -503,7 +545,6 @@ Here are the **key performance findings** from the output:
 
 ---
 ---
----
 
  **Workload E (Short Ranges)** on **MongoDB with 16 Million records**:
 
@@ -511,7 +552,7 @@ Here are the **key performance findings** from the output:
 
 ###  **YCSB Workload E (16M Records) – MongoDB**
 
-**🔹 General Info**
+** General Info**
 
 * **Record Count:** 16,000,000
 * **Operations Run:** 600,000
@@ -527,7 +568,7 @@ Here are the **key performance findings** from the output:
 | **Throughput** | **618 ops/sec**           |
 | **GC Time**    | 2,059 ms (0.21%)          |
 
----
+
 
 ###  **SCAN Operation (95%)**
 
@@ -540,7 +581,7 @@ Here are the **key performance findings** from the output:
 | **95th Percentile**   | 69,887        |
 | **99th Percentile**   | 89,535        |
 
-✔ All scan operations returned **OK**.
+All scan operations returned **OK**.
 
 
 
@@ -581,8 +622,6 @@ Here are the **key performance findings** from the output:
 
 ---
 ---
----
-
 
 **Workload F Benchmark Analysis (16 Million Records on MongoDB):**
 
@@ -646,7 +685,7 @@ Here are the **key performance findings** from the output:
 
 
 
-#### ♻ **GC Activity**
+####  **GC Activity**
 
 * **Young GC Count**: 126
 * **Young GC Time**: `203 ms`
@@ -664,24 +703,8 @@ Here are the **key performance findings** from the output:
 
 ---
 
-Yes, you're absolutely right — ✅ **Workload D for 16M records has already been completed and analyzed.**
 
-Here's a quick recap of what we've finished so far:
 
----
-
-###  **Completed Workloads (16M Records on MongoDB)**
-
-| Workload | Type                      | Output File                          | Status  |
-| -------- | ------------------------- | ------------------------------------ | ------- |
-| A        | Read + Write (50/50)      | `output-mongo-run-16m-workloada.txt` |  Done |
-| B        | Read-Heavy (95R/5W)       | `output-mongo-run-16m-workloadb.txt` |  Done |
-| C        | Read-Only                 | `output-mongo-run-16m-workloadc.txt` |  Done |
-| D        | Read-Latest               | `output-mongo-run-16m-workloadd.txt` |  Done |
-| E        | Short Ranges (scan-heavy) | `output-mongo-run-16m-workloade.txt` |  Done |
-| F        | Read-Modify-Write         | `output-mongo-run-16m-workloadf.txt` |  Done |
-
----
 
 
 
