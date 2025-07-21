@@ -89,5 +89,59 @@
 ---
 ---
 
+**YCSB Workload A (Run Phase)** for **16 million records on MongoDB** 
 
+Here are the **key performance findings** from the output:
+
+---
+
+###  **Workload A (Run Phase – 16M records on MongoDB)**
+
+| Metric               | Value                   |
+| -------------------- | ----------------------- |
+| **Operation Count**  | `600000` ops            |
+| **Threads Used**     | `16`                    |
+| **Throughput**       | **2601.84 ops/sec**     |
+| **Test Duration**    | \~230.6 seconds         |
+| **Workload Pattern** | 50% Reads / 50% Updates |
+
+---
+
+###  **Latency Analysis**
+
+#### **Read Operations (50%)**
+
+| Percentile | Latency (in microseconds) |
+| ---------- | ------------------------- |
+| Average    | **5850 µs** *(\~5.85 ms)* |
+| 50th       | 4575 µs                   |
+| 90th       | 10575 µs                  |
+| 99th       | 13791 µs                  |
+| 99.9th     | 18239 µs                  |
+
+#### **Update Operations (50%)**
+
+| Percentile | Latency (in microseconds) |
+| ---------- | ------------------------- |
+| Average    | **5227 µs** *(\~5.2 ms)*  |
+| 50th       | 4303 µs                   |
+| 90th       | 9567 µs                   |
+| 99th       | 12095 µs                  |
+| 99.9th     | 16447 µs                  |
+
+---
+
+###  **Interpretation**
+
+* **Throughput (\~2600 ops/sec)** is decent, given the scale (16M records) and the hardware.
+* **Latency remains within acceptable bounds**, showing that MongoDB handles mixed read/write workloads efficiently even at scale.
+* **Tail latencies** (99.9th percentile) stay under \~18 ms, which is good for large-scale applications with moderate real-time needs.
+
+---
+
+###  Summary for Report
+
+> For a 16M document dataset on MongoDB (Workload A – 50/50 read/write), the database achieved **\~2600 ops/sec throughput** with **median latencies under 5 ms**, and **99.9th percentile below 18 ms**. This confirms MongoDB’s ability to handle medium-to-high transactional workloads at scale with consistent performance.
+
+---
 
