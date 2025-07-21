@@ -351,6 +351,87 @@ Here are the **key performance findings** from the output:
 * **Insert latencies** remained under control — average \~1.24 ms, showing MongoDB handles mixed loads efficiently.
 
 ---
+---
+---
+
+ **Workload E (Short Ranges)** on **MongoDB with 16 Million records**:
+
+
+
+###  **YCSB Workload E (16M Records) – MongoDB**
+
+**🔹 General Info**
+
+* **Record Count:** 16,000,000
+* **Operations Run:** 600,000
+* **Workload Type:** Short Ranges (95% scans, 5% inserts)
+
+
+
+###  **Overall Performance**
+
+| Metric         | Value                     |
+| -------------- | ------------------------- |
+| **Runtime**    | 970,755 ms (≈ 970.75 sec) |
+| **Throughput** | **618 ops/sec**           |
+| **GC Time**    | 2,059 ms (0.21%)          |
+
+---
+
+###  **SCAN Operation (95%)**
+
+| Metric                | Value (µs)    |
+| --------------------- | ------------- |
+| **Total Operations**  | 569,942       |
+| **Average Latency**   | 27,106        |
+| **Min / Max Latency** | 192 / 179,583 |
+| **50th Percentile**   | 22,655        |
+| **95th Percentile**   | 69,887        |
+| **99th Percentile**   | 89,535        |
+
+✔ All scan operations returned **OK**.
+
+
+
+###  **INSERT Operation (5%)**
+
+| Metric                        | Value (µs) |
+| ----------------------------- | ---------- |
+| **Successful Inserts**        | 5          |
+| **Failed Inserts**            | 30,053     |
+| **Average Latency (Success)** | 907        |
+| **Average Latency (Failed)**  | 1,341      |
+| **Max Latency (Failed)**      | 57,887     |
+
+ **Insert failures are significant** — likely due to write capacity or indexing issues during concurrent scanning.
+
+
+
+###  **Garbage Collection (G1GC)**
+
+| Generation     | GC Count | GC Time (ms) |
+| -------------- | -------- | ------------ |
+| Young Gen      | 1318     | 2,059        |
+| Old/Concurrent | 0        | 0            |
+
+
+
+###  Summary Notes:
+
+* **Throughput** is moderate at \~618 ops/sec, which is typical for scan-heavy workloads at this scale.
+* **Latency on SCAN** is quite high, especially at the 95th–99th percentile — expected due to disk I/O and memory pressure.
+* **High INSERT failure count** (30K+) should be investigated. It may stem from:
+
+  * Memory limits
+  * Write concern settings
+  * MongoDB configuration (`w=1` may still cause contention under heavy scan load)
+* GC overhead remains minimal and non-blocking.
+
+
+---
+---
+---
+
 
 
 
