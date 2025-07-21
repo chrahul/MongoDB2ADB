@@ -144,4 +144,73 @@ Here are the **key performance findings** from the output:
 > For a 16M document dataset on MongoDB (Workload A – 50/50 read/write), the database achieved **\~2600 ops/sec throughput** with **median latencies under 5 ms**, and **99.9th percentile below 18 ms**. This confirms MongoDB’s ability to handle medium-to-high transactional workloads at scale with consistent performance.
 
 ---
+---
+---
+
+
+ **Workload B (Read-Heavy)** benchmark run on **MongoDB (16M records)**:
+
+
+
+###  **Test Parameters**
+
+* **Database**: MongoDB (local)
+* **Record Count**: 16 million
+* **Operations**: 600,000
+* **Workload**: `workloadb` (95% Reads, 5% Updates)
+* **Threads**: 16
+* **YCSB Command**:
+
+  ```bash
+  ./bin/ycsb run mongodb -s -P workloads/workloadb \
+    -p recordcount=16000000 \
+    -p operationcount=600000 \
+    -p threadcount=16 \
+    -p mongodb.url="mongodb://localhost:27017/ycsb?w=1"
+  ```
+
+---
+
+###  **Performance Metrics**
+
+####  Overall
+
+* **Total RunTime**: `41.7 seconds`
+* **Throughput**: `14,375 ops/sec`
+
+####  Read Operations (570,080 reads)
+
+* **Avg Latency**: `1091.67 µs`
+* **Min Latency**: `122 µs`
+* **Max Latency**: `169,087 µs`
+* **50th Percentile (Median)**: `885 µs`
+* **95th Percentile**: `2,469 µs`
+* **99th Percentile**: `4,343 µs`
+
+####  Update Operations (29,920 updates)
+
+* **Avg Latency**: `1231.01 µs`
+* **Min Latency**: `171 µs`
+* **Max Latency**: `113,983 µs`
+* **50th Percentile**: `987 µs`
+* **95th Percentile**: `2,749 µs`
+* **99th Percentile**: `4,891 µs`
+
+####  Garbage Collection (GC)
+
+* **Young Gen GC Count**: 94
+* **Young Gen GC Time**: `137 ms`
+* **GC Overhead**: \~`0.33%` of total runtime
+
+---
+
+###  Observations
+
+* The MongoDB server handled the **read-heavy workload efficiently**, sustaining **14K+ ops/sec throughput** with low GC overhead.
+* Latency is **well within acceptable limits**, especially the 50th and 95th percentiles.
+* **Read operations dominate the workload**, and the system responded with consistently low latencies, making MongoDB suitable for read-heavy use cases at this scale.
+
+---
+
+
 
