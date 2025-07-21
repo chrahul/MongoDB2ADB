@@ -433,6 +433,106 @@ Here are the **key performance findings** from the output:
 ---
 
 
+**Workload F Benchmark Analysis (16 Million Records on MongoDB):**
+
+
+
+
+####  **Overall Execution**
+
+* **Total Ops Run**: 600,000
+* **Runtime**: `84,641 ms` (\~84.6 sec)
+* **Throughput**: **\~7088 ops/sec**
+
+
+
+####  **READ Operation**
+
+* **Total Reads**: 600,000
+* **Avg Latency**: `1,753 μs` (≈ 1.75 ms)
+* **Min / Max**: `130 μs / 254,975 μs`
+* **P50 / P95 / P99**:
+
+  * 50th: `1,073 μs`
+  * 95th: `3,285 μs`
+  * 99th: `13,327 μs`
+* **Return=OK**: 100%
+
+
+
+####  **READ-MODIFY-WRITE Operation**
+
+* **Total Ops**: 299,729
+* **Avg Latency**: `2,733 μs` (≈ 2.73 ms)
+* **Min / Max**: `305 μs / 255,359 μs`
+* **P50 / P95 / P99**:
+
+  * 50th: `2,000 μs`
+  * 95th: `4,991 μs`
+  * 99th: `18,015 μs`
+
+
+
+####  **UPDATE Operation**
+
+* **Total Updates**: 299,729
+* **Avg Latency**: `971 μs` (≈ 0.97 ms)
+* **Min / Max**: `162 μs / 84,927 μs`
+* **P50 / P95 / P99**:
+
+  * 50th: `781 μs`
+  * 95th: `2,247 μs`
+  * 99th: `4,069 μs`
+* **Return=OK**: 100%
+
+
+
+####  **CLEANUP**
+
+* **Ops**: 16
+* **Average**: `360 μs`
+* **Max**: `5,735 μs`
+
+
+
+#### ♻ **GC Activity**
+
+* **Young GC Count**: 126
+* **Young GC Time**: `203 ms`
+* **GC Time %**: `0.23%` → negligible
+
+
+
+###  Observations:
+
+* Very **stable performance** with >7k ops/sec throughput.
+* **READs are fast**, but READ-MODIFY-WRITE naturally takes longer (\~2.7 ms avg).
+* **UPDATEs are efficient**, with sub-ms average latency.
+* Latency tails (95th and 99th) are within reasonable bounds—indicating good response time distribution.
+* No Old GC or Concurrent GC events — excellent JVM health.
+
+---
+
+Yes, you're absolutely right — ✅ **Workload D for 16M records has already been completed and analyzed.**
+
+Here's a quick recap of what we've finished so far:
+
+---
+
+###  **Completed Workloads (16M Records on MongoDB)**
+
+| Workload | Type                      | Output File                          | Status  |
+| -------- | ------------------------- | ------------------------------------ | ------- |
+| A        | Read + Write (50/50)      | `output-mongo-run-16m-workloada.txt` |  Done |
+| B        | Read-Heavy (95R/5W)       | `output-mongo-run-16m-workloadb.txt` |  Done |
+| C        | Read-Only                 | `output-mongo-run-16m-workloadc.txt` |  Done |
+| D        | Read-Latest               | `output-mongo-run-16m-workloadd.txt` |  Done |
+| E        | Short Ranges (scan-heavy) | `output-mongo-run-16m-workloade.txt` |  Done |
+| F        | Read-Modify-Write         | `output-mongo-run-16m-workloadf.txt` |  Done |
+
+---
+
+
 
 
 
