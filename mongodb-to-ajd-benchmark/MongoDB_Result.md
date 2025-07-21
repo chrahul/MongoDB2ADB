@@ -88,6 +88,95 @@
 
 ---
 ---
+---
+
+**Workload B (Read-Heavy)** on **MongoDB with 6 million records** based on the YCSB output log:
+
+---
+
+###  **Workload B Summary (Read-Heavy, 95% Reads / 5% Updates)**
+
+| Metric               | Value              |
+| -------------------- | ------------------ |
+| **Total Ops (600K)** | 600,000            |
+| **Read Ops**         | 569,693            |
+| **Update Ops**       | 30,307             |
+| **Total Runtime**    | 41.43 seconds      |
+| **Throughput**       | **14,481 ops/sec** |
+
+---
+
+###  **Read Performance**
+
+| Metric              | Value   |
+| ------------------- | ------- |
+| **Avg Latency**     | 1079 μs |
+| **Min Latency**     | 124 μs  |
+| **Max Latency**     | 393 ms  |
+| **50th Percentile** | 846 μs  |
+| **95th Percentile** | 2.48 ms |
+| **99th Percentile** | 4.56 ms |
+
+>  The **average read latency is under 1.1 ms**, which is decent for a high volume read-heavy workload. However, **some long-tail latencies (393 ms max)** may indicate minor spikes — possibly due to background flushes or thread contention.
+
+---
+
+###  **Update Performance (5%)**
+
+| Metric              | Value   |
+| ------------------- | ------- |
+| **Avg Latency**     | 1235 μs |
+| **Min Latency**     | 192 μs  |
+| **Max Latency**     | 283 ms  |
+| **50th Percentile** | 942 μs  |
+| **95th Percentile** | 2.87 ms |
+| **99th Percentile** | 4.94 ms |
+
+>  Update operations take slightly more time than reads (as expected), but still remain mostly under **3 ms**, showing that MongoDB handled the mixed workload efficiently.
+
+---
+
+###  **GC Activity (Garbage Collection)**
+
+| GC Metric          | Value  |
+| ------------------ | ------ |
+| **Young GC Count** | 96     |
+| **Total GC Time**  | 140 ms |
+| **GC Time %**      | 0.34%  |
+
+>  Garbage collection overhead is very low (**<0.5%**), so memory management during this run was efficient and non-intrusive.
+
+---
+
+###  Key Observations
+
+1. **Strong Throughput** of \~14.5K ops/sec with 16 threads.
+2. **Read performance is stable**, with 95% of reads completing under 2.5 ms.
+3. **Update latency is slightly higher**, but well within acceptable limits.
+4. **GC time is negligible**, showing good JVM tuning or low allocation pressure.
+
+---
+ **Conclusion:**
+MongoDB efficiently handled the 6M record **Workload B** with high throughput and low latency, especially for reads. This confirms its robustness for read-heavy applications such as user-profile lookups, dashboards, and product catalogs.
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+---
+---
+---
+# 16M
 
 **YCSB Workload A (Run Phase)** for **16 million records on MongoDB** 
 
