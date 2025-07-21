@@ -1,3 +1,5 @@
+# 6M Records
+
 **Workload A with 6 million records on MongoDB** 
 
 ---
