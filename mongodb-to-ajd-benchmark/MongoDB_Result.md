@@ -211,6 +211,77 @@ Here are the **key performance findings** from the output:
 * **Read operations dominate the workload**, and the system responded with consistently low latencies, making MongoDB suitable for read-heavy use cases at this scale.
 
 ---
+---
+---
+
+
+**MongoDB Workload C (Update-Heavy, 16M records)** benchmark run:
+
+
+
+###  **Benchmark Summary (Workload C – 16M records)**
+
+**Command Run:**
+
+```
+./bin/ycsb run mongodb -s -P workloads/workloadc \
+  -p recordcount=16000000 \
+  -p operationcount=600000 \
+  -p threadcount=16 \
+  -p mongodb.url="mongodb://localhost:27017/ycsb?w=1" \
+  > output-mongo-run-16m-workloadc.txt
+```
+
+---
+
+###  **Performance Metrics**
+
+| Metric                   | Value                    |
+| ------------------------ | ------------------------ |
+| **Total Operations**     | 600,000                  |
+| **Run Time**             | 40.9 sec                 |
+| **Throughput**           | **14,667 ops/sec**       |
+| **Avg Latency (Update)** | **1,075 µs** (≈ 1.07 ms) |
+| **Min Latency**          | 122 µs                   |
+| **Max Latency**          | 67,135 µs                |
+| **50th Percentile**      | 872 µs                   |
+| **95th Percentile**      | 2,487 µs                 |
+| **99th Percentile**      | 4,355 µs                 |
+
+---
+
+###  **Cleanup Performance**
+
+| Metric                  | Value    |
+| ----------------------- | -------- |
+| **Cleanup Ops**         | 16       |
+| **Avg Cleanup Latency** | 372 µs   |
+| **Max Cleanup Latency** | 5,939 µs |
+
+---
+
+###  **Garbage Collection**
+
+| GC Type               | Count | Time (ms)                     | Time % |
+| --------------------- | ----- | ----------------------------- | ------ |
+| **Young Gen (G1)**    | 96    | 133 ms                        | 0.33%  |
+| **Old/Concurrent GC** | 0     | 0 ms                          | 0.00%  |
+| **Total GC Events**   | 96    | Total GC Time: 133 ms (0.33%) |        |
+
+---
+
+###  Observations
+
+* **Consistent throughput** of \~14.6K ops/sec even under update-heavy conditions.
+* Update latency remained within expected bounds — with 95% updates completing in <2.5 ms.
+* Garbage collection overhead is negligible (<0.5%), indicating memory handling is optimal.
+
+---
+
+ **Conclusion**: MongoDB performed **robustly under Write-Heavy (Update) workload** at the 16M scale. Throughput held steady and latencies were low, confirming the system's efficiency for OLTP-like write patterns.
+
+---
+
 
 
 
