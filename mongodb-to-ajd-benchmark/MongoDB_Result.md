@@ -92,7 +92,7 @@
 
 **Workload B (Read-Heavy)** on **MongoDB with 6 million records** based on the YCSB output log:
 
----
+
 
 ###  **Workload B Summary (Read-Heavy, 95% Reads / 5% Updates)**
 
@@ -104,7 +104,7 @@
 | **Total Runtime**    | 41.43 seconds      |
 | **Throughput**       | **14,481 ops/sec** |
 
----
+
 
 ###  **Read Performance**
 
@@ -119,7 +119,7 @@
 
 >  The **average read latency is under 1.1 ms**, which is decent for a high volume read-heavy workload. However, **some long-tail latencies (393 ms max)** may indicate minor spikes — possibly due to background flushes or thread contention.
 
----
+
 
 ###  **Update Performance (5%)**
 
@@ -134,7 +134,7 @@
 
 >  Update operations take slightly more time than reads (as expected), but still remain mostly under **3 ms**, showing that MongoDB handled the mixed workload efficiently.
 
----
+
 
 ###  **GC Activity (Garbage Collection)**
 
@@ -146,7 +146,7 @@
 
 >  Garbage collection overhead is very low (**<0.5%**), so memory management during this run was efficient and non-intrusive.
 
----
+
 
 ###  Key Observations
 
@@ -155,11 +155,73 @@
 3. **Update latency is slightly higher**, but well within acceptable limits.
 4. **GC time is negligible**, showing good JVM tuning or low allocation pressure.
 
----
+
  **Conclusion:**
 MongoDB efficiently handled the 6M record **Workload B** with high throughput and low latency, especially for reads. This confirms its robustness for read-heavy applications such as user-profile lookups, dashboards, and product catalogs.
 
 ---
+---
+---
+
+**MongoDB YCSB Workload C results (6M records)**:
+
+
+
+###  **Workload C (Read-Only, 100% Reads)**
+
+ *File Analyzed: `output-mongo-run-6m-workloadc.txt`*
+
+####  Configuration Recap:
+
+* **Record Count:** 6,000,000
+* **Operation Count:** 600,000
+* **Thread Count:** 16
+* **MongoDB URL:** `mongodb://localhost:27017/ycsb?w=1`
+
+---
+
+###  Performance Metrics:
+
+| Metric                      | Value               |
+| --------------------------- | ------------------- |
+| **Total Runtime**        | 36.77 sec           |
+| **Throughput**            | **16,319 ops/sec**  |
+| **Total Operations**     | 600,000 (All Reads) |
+| **Average Read Latency** | 966 µs (0.966 ms)   |
+| **Max Read Latency**     | 68.5 ms             |
+| **50th Percentile**      | 809 µs              |
+| **95th Percentile**      | 2.2 ms              |
+| **99th Percentile**      | 4.2 ms              |
+| **Successful Reads**      | 600,000 (100%)      |
+
+
+
+###  GC (Garbage Collection) Info:
+
+| GC Metric         | Value         |
+| ----------------- | ------------- |
+| Young GC Count    | 96            |
+| Young GC Time     | 124 ms        |
+| Total GC Time (%) | 0.33%         |
+| Old/Concurrent GC | 0 occurrences |
+
+
+
+###  Interpretation:
+
+* **Excellent performance for read-only workload.**
+* Average read latency is **well under 1 ms**, indicating MongoDB handles read-heavy load efficiently at 6M scale.
+* 95th and 99th percentile latencies are also low — demonstrating consistency under concurrent read pressure.
+
+
+
+**Conclusion**:
+MongoDB demonstrates **high throughput** and **low latency** for read-dominant use cases with 6 million records. It’s well-suited for scenarios such as product catalogs, analytics dashboards, or recommendation engines.
+
+---
+---
+---
+
 
 
 
