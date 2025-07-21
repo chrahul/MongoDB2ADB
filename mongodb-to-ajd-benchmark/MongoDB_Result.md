@@ -280,7 +280,79 @@ Here are the **key performance findings** from the output:
 
  **Conclusion**: MongoDB performed **robustly under Write-Heavy (Update) workload** at the 16M scale. Throughput held steady and latencies were low, confirming the system's efficiency for OLTP-like write patterns.
 
+
+
+
+
 ---
+---
+---
+
+
+**Workload D (Read Latest)** test on **MongoDB with 16 million records**:
+
+
+
+###  **Test Summary: Workload D – 16M Records**
+
+| Metric            | Value          |
+| ----------------- | -------------- |
+| **Total Runtime** | 43.86 sec      |
+| **Throughput**    | 13,679 ops/sec |
+| **GC Time (%)**   | 0.31%          |
+
+---
+
+###  **Operation Breakdown**
+
+#### 🔹 READ (Latest)
+
+| Metric                  | Value      |
+| ----------------------- | ---------- |
+| Operations              | 569,947    |
+| Average Latency (μs)    | 1,147.67   |
+| Min Latency             | 128 μs     |
+| Max Latency             | 102,079 μs |
+| 50th Percentile Latency | 947 μs     |
+| 95th Percentile Latency | 2,495 μs   |
+| 99th Percentile Latency | 4,211 μs   |
+
+ **Return=OK**: All 569,947 read operations were successful.
+
+---
+
+####  INSERT (during test)
+
+| Metric                  | Value     |
+| ----------------------- | --------- |
+| Operations              | 30,053    |
+| Average Latency (μs)    | 1,241.82  |
+| Min Latency             | 157 μs    |
+| Max Latency             | 47,999 μs |
+| 50th Percentile Latency | 1,014 μs  |
+| 95th Percentile Latency | 2,843 μs  |
+| 99th Percentile Latency | 4,971 μs  |
+
+ **Return=OK**: All 30,053 inserts completed successfully.
+
+---
+
+####  CLEANUP
+
+* 16 operations with **very low latency** (most < 3ms).
+
+---
+
+###  Interpretation
+
+* This workload simulates **real-time reads of the latest records**, common in **news feeds, live dashboards, or monitoring systems**.
+* MongoDB delivered **stable throughput (13.6K ops/sec)** even with 16M records.
+* **Read latencies are higher than workload B**, as expected due to targeting newer entries and possible cache misses.
+* **Insert latencies** remained under control — average \~1.24 ms, showing MongoDB handles mixed loads efficiently.
+
+---
+
+
 
 
 
