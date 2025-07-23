@@ -1,4 +1,6 @@
-# MONGODB_6m_Records
+# 6M Record
+
+## MONGODB_6m_Records
 ---
 ###  **MongoDB – Workload A Benchmark Summary (6M Records)**
 
@@ -128,7 +130,7 @@
 ---
 
 
-# AJD
+## AJD_6m_Records
 ---
 
 ### **AJD – Workload A Benchmark Summary (6M Records)**
