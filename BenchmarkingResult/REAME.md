@@ -280,33 +280,7 @@ While the charts above are **Atlas-only (CSV)**, the AJD summary documents indic
 
 ---
 
-# **6. Technical Interpretation**
-
-### **Why MongoDB Performs Better**
-
-* Mature native execution engine
-* Highly optimized for JSON storage
-* Efficient multi-threading
-* Predictable index utilization
-* No API translation layers
-* Better concurrency control
-
-### **Why AJD Mongo API Struggles**
-
-Based on factual test outputs:
-
-* Mongo API adds translation overhead
-* High latency at the API layer
-* Limited concurrency (QPS ceiling ~15–17)
-* Non-linear latency growth
-* Range queries not optimized for Mongo API
-* Mixed workloads causing significant write amplification
-
-Oracle AJD’s **native SQL/JSON engine** is powerful — but the **Mongo API compatibility layer** is not optimized for OLTP-style workloads.
-
----
-
-# **7. Conclusion**
+# **6. Conclusion**
 
 MongoDB outperforms AJD (Mongo API) by:
 
@@ -315,27 +289,10 @@ MongoDB outperforms AJD (Mongo API) by:
 * **Substantial stability advantages**
 * **Smooth scalability from 6M to 16M**
 
-This benchmark does **not** evaluate AJD’s native JSON/SQL performance, which may behave differently.
-It focuses solely on the **Mongo API compatibility layer**, which is not designed for high-throughput OLTP traffic at dataset scales above a few million documents.
-
-Winfo Solutions remains committed to transparency, accuracy, and responsible technical advisory for both Oracle and MongoDB customers.
-
----
-
-# **8. Contact & Reproducibility**
-
-* All MongoDB CSV files included in this repo
-* AJD summary results can be validated with Oracle upon request
-* Full dataset generation scripts and YCSB commands to be added in `/scripts/` folder
-
-For collaboration or further validation, please contact the Winfo benchmarking team.
-
 ---
 
 
 
-
----
 
 
 
