@@ -77,7 +77,7 @@ This README reflects both datasets transparently.
 
 ---
 
-# **3. Key Findings (Fact-Based)**
+# **3. Key Findings**
 
 ## **3.1 Throughput Comparison (Winner: MongoDB)**
 
